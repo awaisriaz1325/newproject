@@ -1,0 +1,82 @@
+[project]
+name = "compback"
+version = "0.1.0"
+description = "CompBack monorepo (workspace root)"
+requires-python = ">=3.13"
+dependencies = [
+  "compback-core",
+  "compback-vault",
+  "compback-extract",
+  "compback-rating",
+  "compback-ml",
+  "compback-disputes",
+  "compback-api",
+  "compback-worker",
+]
+
+[dependency-groups]
+dev = [
+  "pytest>=8",
+  "pytest-cov>=6",
+  "hypothesis>=6",
+  "mypy>=1.15",
+  "ruff>=0.11",
+  "httpx>=0.28",
+  "pre-commit>=4",
+  "pip-audit>=2.9",
+]
+
+[tool.uv]
+package = false
+
+[tool.uv.workspace]
+members = ["packages/*", "apps/api", "apps/worker"]
+
+[tool.uv.sources]
+compback-core = { workspace = true }
+compback-vault = { workspace = true }
+compback-extract = { workspace = true }
+compback-rating = { workspace = true }
+compback-ml = { workspace = true }
+compback-disputes = { workspace = true }
+compback-api = { workspace = true }
+compback-worker = { workspace = true }
+
+[tool.ruff]
+line-length = 100
+target-version = "py313"
+extend-exclude = ["apps/web", "migrations/versions"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "S", "N", "SIM", "RUF", "PL", "PT", "DTZ", "T20", "ASYNC", "BLE"]
+ignore = ["PLR0913", "PLR2004", "S101", "PLR0911"]
+
+[tool.ruff.lint.per-file-ignores]
+"**/tests/**" = ["S", "PLR", "N802"]
+"tests/**" = ["S", "PLR", "N802"]
+"migrations/**" = ["E501", "N999"]
+
+[tool.mypy]
+python_version = "3.13"
+strict = true
+plugins = ["pydantic.mypy"]
+mypy_path = "packages/core/src:packages/vault/src:packages/extract/src:packages/rating/src:packages/ml/src:packages/disputes/src:apps/api/src:apps/worker/src"
+explicit_package_bases = true
+warn_unreachable = true
+exclude = ["migrations/", "apps/web/", "build/"]
+
+[[tool.mypy.overrides]]
+module = ["pyotp.*", "pypdfium2.*", "pytesseract.*", "clamd.*", "boto3.*", "botocore.*"]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+addopts = "-ra --strict-markers"
+testpaths = ["packages", "apps/api/tests", "apps/worker/tests", "tests"]
+markers = [
+  "db: requires a PostgreSQL database (DATABASE_URL)",
+]
+filterwarnings = ["error::DeprecationWarning:compback_.*"]
+
+[tool.coverage.run]
+source = ["packages", "apps/api/src", "apps/worker/src"]
+branch = true

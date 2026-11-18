@@ -1,0 +1,20 @@
+[project]
+name = "compback-extract"
+version = "0.1.0"
+requires-python = ">=3.13"
+dependencies = [
+  "compback-core",
+  "compback-vault",
+  "anthropic>=0.50",
+]
+
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/compback_extract"]
+
+[tool.uv.sources]
+compback-core = { workspace = true }
+compback-vault = { workspace = true }

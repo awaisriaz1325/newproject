@@ -1,0 +1,19 @@
+[project]
+name = "compback-disputes"
+version = "0.1.0"
+requires-python = ">=3.13"
+dependencies = [
+  "compback-core",
+  "compback-rating",
+]
+
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/compback_disputes"]
+
+[tool.uv.sources]
+compback-core = { workspace = true }
+compback-rating = { workspace = true }

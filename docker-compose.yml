@@ -1,0 +1,55 @@
+# Local development stack. `docker compose up` then `make migrate`.
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_PASSWORD: postgres
+    ports: ["5432:5432"]
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./infra/db/bootstrap.sql:/docker-entrypoint-initdb.d/00-bootstrap.sql:ro
+      - ./infra/db/compose-init.sh:/docker-entrypoint-initdb.d/01-db.sh:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      retries: 10
+
+  clamav:
+    image: clamav/clamav:stable
+    ports: ["3310:3310"]
+
+  api:
+    build: { context: ., dockerfile: infra/docker/python.Dockerfile, target: runtime }
+    env_file: .env
+    environment:
+      COMPBACK_DATABASE_URL: postgresql+psycopg://compback_app:compback_app@db:5432/compback
+      COMPBACK_DATABASE_OWNER_URL: postgresql+psycopg://compback_owner:compback_owner@db:5432/compback
+      COMPBACK_CLAMAV_HOST: clamav
+    ports: ["8000:8000"]
+    depends_on: { db: { condition: service_healthy } }
+
+  worker:
+    build: { context: ., dockerfile: infra/docker/python.Dockerfile, target: runtime }
+    command: ["python", "-m", "compback_worker.main"]
+    env_file: .env
+    environment:
+      COMPBACK_DATABASE_URL: postgresql+psycopg://compback_app:compback_app@db:5432/compback
+      COMPBACK_CLAMAV_HOST: clamav
+    depends_on: { db: { condition: service_healthy } }
+    # Sandbox: no extra privileges, bounded memory, read-only root FS.
+    read_only: true
+    tmpfs: ["/tmp"]
+    security_opt: ["no-new-privileges:true"]
+    cap_drop: ["ALL"]
+    mem_limit: 1g
+    pids_limit: 256
+
+  web:
+    build: { context: ., dockerfile: infra/docker/web.Dockerfile }
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8000
+    ports: ["3000:3000"]
+    depends_on: [api]
+
+volumes:
+  pgdata:
