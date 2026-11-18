@@ -55,6 +55,7 @@ class Settings(BaseSettings):
     session_idle_minutes: int = 60
     session_absolute_hours: int = 12
     cookie_secure: bool = True
+    rate_limits_enabled: bool = True
     allowed_origins: list[str] = Field(default_factory=lambda: ["http://localhost:3000"])
 
     # Uploads

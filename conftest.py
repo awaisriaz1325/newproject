@@ -8,6 +8,7 @@ import os
 os.environ.setdefault("COMPBACK_ENV", "test")
 os.environ.setdefault("COMPBACK_LOG_JSON", "true")
 os.environ.setdefault("COMPBACK_COOKIE_SECURE", "false")
+os.environ.setdefault("COMPBACK_RATE_LIMITS_ENABLED", "false")
 os.environ.setdefault(
     "COMPBACK_DATABASE_URL",
     "postgresql+psycopg://compback_app:compback_app@localhost:5432/compback_test",

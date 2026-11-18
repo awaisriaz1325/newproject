@@ -1,5 +1,6 @@
-from compback_api.main import create_app
 from fastapi.testclient import TestClient
+
+from compback_api.main import create_app
 
 
 def test_liveness_and_security_headers() -> None:

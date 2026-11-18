@@ -1,4 +1,6 @@
-# Threat model (STRIDE) — v0.1 (Phase 0)
+# Threat model (STRIDE) — v0.2 (Phase 2)
+
+> Phase 2 status: T1, T2, T3, T4 (grants), T5, T16 mitigations implemented and tested.
 
 Updated every phase. Severity: Low / Medium / High / Critical.
 
@@ -24,7 +26,7 @@ Updated every phase. Severity: Low / Medium / High / Critical.
 
 | # | STRIDE | Threat | Sev | Mitigation | Phase |
 |---|---|---|---|---|---|
-| T1 | I | Cross-tenant data leak via missing `WHERE org_id` | Critical | Postgres RLS (FORCE) + app scope + automated cross-tenant tests per table/endpoint | 2 |
+| T1 | I | Cross-tenant data leak via missing `WHERE org_id` | Critical | Postgres RLS (app role is non-owner, ADR-0013) + app scope + automated cross-tenant tests per table/endpoint | 2 |
 | T2 | S | Account takeover (credential stuffing) | High | argon2id, rate limit, MFA mandatory for advisors/reviewers, session rotation | 2 |
 | T3 | E | Advisor keeps access after consent revoked | High | Access derived from active `advisor_client_links` row at query time; revocation is immediate | 2 |
 | T4 | I | Internal reviewer browses customer docs | High | JIT grants with reason + expiry, audit log visible to customer | 2–3 |

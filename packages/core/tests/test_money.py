@@ -1,10 +1,11 @@
 from decimal import Decimal
 
 import pytest
-from compback_core.money import ExactDecimal, FloatMoneyError, format_usd, round_cents, to_decimal
 from hypothesis import given
 from hypothesis import strategies as st
 from pydantic import BaseModel
+
+from compback_core.money import ExactDecimal, FloatMoneyError, format_usd, round_cents, to_decimal
 
 
 def test_rejects_float() -> None:

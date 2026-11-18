@@ -7,12 +7,12 @@ import uuid
 from collections.abc import Awaitable, Callable
 
 import structlog
-from compback_core.config import Settings, get_settings
-from compback_core.logs import configure_logging, get_logger
 from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 
-from compback_api.routes import health
+from compback_api.routes import auth, health, jurisdictions, orgs
+from compback_core.config import Settings, get_settings
+from compback_core.logs import configure_logging, get_logger
 
 log = get_logger(__name__)
 
@@ -74,6 +74,9 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         return response
 
     app.include_router(health.router)
+    app.include_router(auth.router)
+    app.include_router(orgs.router)
+    app.include_router(jurisdictions.router)
     return app
 
 

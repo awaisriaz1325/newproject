@@ -51,9 +51,12 @@ extend-exclude = ["apps/web", "migrations/versions"]
 select = ["E", "F", "W", "I", "B", "UP", "S", "N", "SIM", "RUF", "PL", "PT", "DTZ", "T20", "ASYNC", "BLE"]
 ignore = ["PLR0913", "PLR2004", "S101", "PLR0911"]
 
+[tool.ruff.lint.isort]
+known-first-party = ["compback_core", "compback_vault", "compback_extract", "compback_rating", "compback_ml", "compback_disputes", "compback_api", "compback_worker"]
+
 [tool.ruff.lint.per-file-ignores]
-"**/tests/**" = ["S", "PLR", "N802"]
-"tests/**" = ["S", "PLR", "N802"]
+"**/tests/**" = ["S", "PLR", "N802", "SIM117", "PLC0415"]
+"tests/**" = ["S", "PLR", "N802", "SIM117", "PLC0415"]
 "migrations/**" = ["E501", "N999"]
 
 [tool.mypy]
@@ -70,7 +73,7 @@ module = ["pyotp.*", "pypdfium2.*", "pytesseract.*", "clamd.*", "boto3.*", "boto
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]
-addopts = "-ra --strict-markers"
+addopts = "-ra --strict-markers --import-mode=importlib"
 testpaths = ["packages", "apps/api/tests", "apps/worker/tests", "tests"]
 markers = [
   "db: requires a PostgreSQL database (DATABASE_URL)",

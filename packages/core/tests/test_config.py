@@ -1,6 +1,7 @@
 import pytest
-from compback_core.config import Environment, Settings
 from pydantic import ValidationError
+
+from compback_core.config import Environment, Settings
 
 
 def test_prod_rejects_unsafe_backends() -> None:

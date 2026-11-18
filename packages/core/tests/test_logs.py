@@ -1,6 +1,7 @@
 import json
 
 import pytest
+
 from compback_core.logs import configure_logging, get_logger, scrub_value
 
 

@@ -2,9 +2,10 @@
 
 from __future__ import annotations
 
-from compback_core.db import check_database
 from fastapi import APIRouter, Response, status
 from sqlalchemy.exc import SQLAlchemyError
+
+from compback_core.db import check_database
 
 router = APIRouter(tags=["health"])
 
