@@ -40,3 +40,7 @@ All notable changes are recorded here (Keep a Changelog style).
   recomputation, case tracker (package download, fee terms, submission record, outcomes, fees),
   customer-visible access log, advisor invite/approve/revoke, legal placeholders.
 - Browser smoke test (`tests/e2e/smoke.cjs`) run locally end-to-end.
+
+### Phases 9–10 — 2026-11-18
+- Rate limits on upload/analysis, local restore drill, latency measurement, threat model v1.0,
+  Fly.io configs, incident runbooks, launch checklist.

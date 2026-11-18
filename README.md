@@ -5,8 +5,9 @@ policyholder's policy and audit documents, **recomputes the premium independentl
 deterministic Decimal engine, flags likely overcharges with evidence, and prepares a dispute package
 that **the business (or its own advisor) reviews and submits**. CompBack never contacts carriers.
 
-> Status: pre-launch. See `docs/FOUNDER_DECISIONS.md` — paid features are disabled in every state
-> until counsel review (`docs/phase-0/01-legal-regulatory.md`).
+> Status: pre-launch, phases 0–10 built (see `docs/phase-reports/`). Blocking before launch:
+> attorney review (FD-01) and production accounts (FD-06/07). Paid features are disabled in every state
+> until counsel review (`docs/phase-0/01-legal-regulatory.md`). Launch checklist: `docs/LAUNCH_CHECKLIST.md`.
 
 ## Repository layout
 

@@ -8,11 +8,11 @@ from datetime import date, datetime
 from decimal import Decimal
 from typing import Any, Literal
 
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel, Field
 from sqlalchemy import select
 
-from compback_api.deps import CurrentOrg, OrgAccess, OrgDb, utcnow
+from compback_api.deps import CurrentOrg, OrgAccess, OrgDb, rate_limit, utcnow
 from compback_core import audit
 from compback_core.models import (
     Document,
@@ -208,7 +208,11 @@ def _analysis_out(db: OrgDb, access: OrgAccess, rec: Recomputation) -> AnalysisO
     )
 
 
-@router.post("/{policy_id}/analyze", status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/{policy_id}/analyze",
+    status_code=status.HTTP_201_CREATED,
+    dependencies=[Depends(rate_limit("analyze", 20, 300))],
+)
 def run_analysis(policy_id: uuid.UUID, access: CurrentOrg, db: OrgDb) -> AnalysisOut:
     pol = _policy(db, access, policy_id)
     docs = list(

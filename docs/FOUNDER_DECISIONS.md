@@ -17,3 +17,7 @@ spends money, contacts a third party, or goes live. Review and reply "accept FD-
 | FD-09 | Brand / domain | "CompBack" working name; no domain purchased; trademark search not done | — | Low | OPEN |
 | FD-10 | Licensed partner / own license | Recommend founder explore P&C producer + consultant license in launch states, or a licensed partner | Unlocks NY/VA-type states | High | OPEN |
 | FD-11 | Privacy policy / ToS / DPA | Placeholders only, flagged for attorney | Build rule §8 | High | OPEN |
+| FD-12 | External penetration test before launch | Recommended (budget TBD) | Threat model open item | High | OPEN |
+| FD-13 | Transactional email provider (verification, reminders) | Postmark or Resend; outbox already built | Needed for verification emails in prod | Medium | OPEN |
+| FD-14 | Model fallback on refusal | **No** server-side fallback; route to human review (ADR-0014) | Keeps every document on a model with known retention terms | Medium | PROVISIONAL |
+| FD-15 | Customer-visible findings outside NC | Only document-consistency findings until other states' rules are verified | Build rule: no uncited rule in customer numbers | High | PROVISIONAL |

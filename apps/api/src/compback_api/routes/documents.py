@@ -13,12 +13,12 @@ from datetime import datetime
 from functools import lru_cache
 from typing import Annotated
 
-from fastapi import APIRouter, File, HTTPException, Query, Response, UploadFile, status
+from fastapi import APIRouter, Depends, File, HTTPException, Query, Response, UploadFile, status
 from PIL import Image, ImageDraw
 from pydantic import BaseModel
 from sqlalchemy import select
 
-from compback_api.deps import CurrentOrg, OrgAccess, OrgDb, require_owner, utcnow
+from compback_api.deps import CurrentOrg, OrgAccess, OrgDb, rate_limit, require_owner, utcnow
 from compback_core import audit
 from compback_core.config import get_settings
 from compback_core.models import Document, DocumentPage
@@ -100,7 +100,11 @@ def _get_doc(db: OrgDb, access: OrgAccess, doc_id: uuid.UUID) -> Document:
     return doc
 
 
-@router.post("", status_code=status.HTTP_201_CREATED)
+@router.post(
+    "",
+    status_code=status.HTTP_201_CREATED,
+    dependencies=[Depends(rate_limit("upload", 60, 300))],
+)
 def upload(
     access: CurrentOrg, db: OrgDb, file: Annotated[UploadFile, File()], response: Response
 ) -> DocumentOut:

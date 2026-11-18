@@ -1,6 +1,6 @@
-# Threat model (STRIDE) — v0.3 (Phase 3)
+# Threat model (STRIDE) — v1.0 (Phase 9)
 
-> Phase 3 status: T1–T7, T9, T12, T16 mitigations implemented and tested. Signed URLs replaced by API-streamed, watermarked content with user-bound HMAC links (stronger than bucket URLs).
+> Phase 9 status: T1–T14 and T16 mitigations implemented and covered by tests; T15 documented. Open items below.
 
 Updated every phase. Severity: Low / Medium / High / Critical.
 
@@ -33,7 +33,7 @@ Updated every phase. Severity: Low / Medium / High / Critical.
 | T5 | T | Audit log tampering | Medium | Insert-only grants + trigger + hash chain verifier | 2 |
 | T6 | I | SSN stored in derived text / sent to LLM | Critical | Redaction before persistence of derived text; tests on synthetic SSN corpus incl. OCR'd scans | 3–4 |
 | T7 | D/E | Malicious file (PDF bomb, zip bomb, polyglot, exploit) | High | Allow-list, magic bytes, size/page caps, ClamAV, sandboxed worker with timeouts/memory caps | 3 |
-| T8 | T | Prompt injection in uploaded documents alters findings | High | Docs never in instructions; strict schema; engine recomputes all numbers; red-team suite in CI | 4 |
+| T8 | T | Prompt injection in uploaded documents alters findings (red-team suite: test_extract.py) | High | Docs never in instructions; strict schema; engine recomputes all numbers; red-team suite in CI | 4 |
 | T9 | I | Signed URL leakage | Medium | 60–300 s expiry, bound to user via API proxy, download watermark, no public buckets | 3 |
 | T10 | R | Customer disputes who approved/submitted a package | Medium | Approval + submission recorded with actor, time, method; audit chain | 7 |
 | T11 | T | Stripe webhook spoof / replay | High | Signature verification, event-id idempotency table | 8 |
@@ -43,6 +43,15 @@ Updated every phase. Severity: Low / Medium / High / Critical.
 | T15 | I | Backup retains deleted customer data | Medium | Documented backup retention window; deletion SLA states it | 10 |
 | T16 | S | CSRF on state-changing endpoints | Medium | SameSite=Lax + double-submit token | 2 |
 
-## Open items
-- Pen test before launch (Phase 9).
-- Decide KMS provider account (FD-07).
+## Open items (Phase 9 review, 2026-11-18)
+
+| Item | Severity | Status / plan |
+|---|---|---|
+| Web CSP allows `'unsafe-inline'` scripts (Next.js inline runtime) | Medium | Accepted for v1; move to nonce-based CSP via Next proxy before GA |
+| Session token not rotated when MFA is verified (only the flag flips) | Medium | Fix: issue a new session on MFA verify; tracked |
+| No self-service password reset (token purpose exists) | Low (support load) | Implement with email provider (FD-07) |
+| `worker`/`system` actor kinds widen RLS; set only by server code | Medium | Accepted by design (ADR-0013); never derived from request input; reviewed |
+| External pen test not done | High (process) | Before launch; budget decision for founder |
+| Real ClamAV signature DB not exercised here | Medium | Verify in staging with EICAR upload |
+| Rate limits are per-IP fixed windows | Low | Add per-account limits if abuse appears |
+| KMS account and key policy | High (until done) | FD-07; prod config refuses to start without it |

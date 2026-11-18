@@ -1,0 +1,39 @@
+# Fly.io config for the API (FD-07, PROVISIONAL). Verify keys against current Fly docs at deploy time.
+# Secrets (never here): COMPBACK_DATABASE_URL, COMPBACK_DATABASE_OWNER_URL, COMPBACK_KMS_KEY_ID,
+# AWS credentials for KMS, S3/R2 credentials, COMPBACK_SIGNING_SECRET, COMPBACK_ANTHROPIC_API_KEY,
+# COMPBACK_STRIPE_API_KEY, COMPBACK_STRIPE_WEBHOOK_SECRET  ->  `fly secrets set ...`
+app = "compback-api"
+primary_region = "iad"
+
+[build]
+  dockerfile = "../docker/python.Dockerfile"
+
+[deploy]
+  # Zero-downtime: migrations are expand/contract (additive first), run before new machines start.
+  release_command = "alembic upgrade head"
+
+[env]
+  COMPBACK_ENV = "prod"
+  COMPBACK_STORAGE_BACKEND = "s3"
+  COMPBACK_KMS_BACKEND = "aws"
+  COMPBACK_LLM_PROVIDER = "anthropic"
+  COMPBACK_BILLING_PROVIDER = "stripe"
+
+[http_service]
+  internal_port = 8000
+  force_https = true
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 1
+
+  [[http_service.checks]]
+    grace_period = "10s"
+    interval = "15s"
+    method = "GET"
+    path = "/readyz"
+    timeout = "5s"
+
+[[vm]]
+  memory = "1gb"
+  cpu_kind = "shared"
+  cpus = 1
