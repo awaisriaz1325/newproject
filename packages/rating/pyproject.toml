@@ -4,6 +4,7 @@ version = "0.1.0"
 requires-python = ">=3.13"
 dependencies = [
   "compback-core",
+  "compback-extract",
 ]
 
 [build-system]
@@ -15,3 +16,4 @@ packages = ["src/compback_rating"]
 
 [tool.uv.sources]
 compback-core = { workspace = true }
+compback-extract = { workspace = true }

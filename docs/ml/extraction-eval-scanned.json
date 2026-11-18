@@ -24,9 +24,9 @@
       "fn": 1
     },
     "total_premium": {
-      "tp": 59,
+      "tp": 60,
       "fp": 0,
-      "fn": 1
+      "fn": 0
     },
     "previously_billed": {
       "tp": 59,
@@ -56,9 +56,9 @@
       "fn": 4
     },
     "billing": {
-      "tp": 198,
+      "tp": 199,
       "fp": 0,
-      "fn": 6
+      "fn": 5
     }
   }
 }

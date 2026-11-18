@@ -24,3 +24,7 @@ All notable changes are recorded here (Keep a Changelog style).
 ### Phase 4 — 2026-11-18
 - Extraction schemas, classifier, baseline + Claude extractors, cross-checks, review routing,
   verification API, synthetic corpus generator and evaluation harness with measured results.
+
+### Phase 5 — 2026-11-18
+- Rules registry with NCRB citations, Decimal engine with explanations, 7 detectors with engine-priced
+  impacts, golden/property tests, policies/recomputations/findings persistence, analysis + reviewer API.

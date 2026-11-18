@@ -24,6 +24,7 @@ _LABELS: dict[str, list[str]] = {
     "total_manual_premium": [r"total manual premium", r"manual premium total"],
     "experience_mod": [r"experience mod(ification)?( factor)?", r"\bmod factor"],
     "expense_constant": [r"expense constant"],
+    "schedule_mod": [r"schedule (credit|debit|rating|modification)"],
     "total_premium": [r"total (audited |final )?premium"],
     "previously_billed": [r"previously billed", r"deposit premium", r"estimated premium paid"],
     "balance": [r"additional premium due", r"return premium", r"balance due", r"amount due"],

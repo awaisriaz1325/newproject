@@ -551,6 +551,7 @@ dependencies = [
     { name = "compback-core" },
     { name = "compback-disputes" },
     { name = "compback-extract" },
+    { name = "compback-ml" },
     { name = "compback-rating" },
     { name = "compback-vault" },
     { name = "email-validator" },
@@ -566,6 +567,7 @@ requires-dist = [
     { name = "compback-core", editable = "packages/core" },
     { name = "compback-disputes", editable = "packages/disputes" },
     { name = "compback-extract", editable = "packages/extract" },
+    { name = "compback-ml", editable = "packages/ml" },
     { name = "compback-rating", editable = "packages/rating" },
     { name = "compback-vault", editable = "packages/vault" },
     { name = "email-validator", specifier = ">=2.2" },
@@ -655,10 +657,14 @@ version = "0.1.0"
 source = { editable = "packages/rating" }
 dependencies = [
     { name = "compback-core" },
+    { name = "compback-extract" },
 ]
 
 [package.metadata]
-requires-dist = [{ name = "compback-core", editable = "packages/core" }]
+requires-dist = [
+    { name = "compback-core", editable = "packages/core" },
+    { name = "compback-extract", editable = "packages/extract" },
+]
 
 [[package]]
 name = "compback-vault"

@@ -8,6 +8,7 @@ dependencies = [
   "compback-extract",
   "compback-rating",
   "compback-disputes",
+  "compback-ml",
   "fastapi>=0.115",
   "uvicorn[standard]>=0.34",
   "argon2-cffi>=23.1",
@@ -26,6 +27,7 @@ packages = ["src/compback_api"]
 [tool.uv.sources]
 compback-core = { workspace = true }
 compback-disputes = { workspace = true }
+compback-ml = { workspace = true }
 compback-extract = { workspace = true }
 compback-rating = { workspace = true }
 compback-vault = { workspace = true }

@@ -1,7 +1,7 @@
 # Extraction evaluation (synthetic corpus, native text layer)
 
-- Generated: 2026-11-18 12:02 UTC
-- Extractor: `heuristic-v1` · documents: 60 · mean wall time incl. render+OCR: 0.61 s/doc · LLM cost: $0.0000
+- Generated: 2026-11-18 12:16 UTC
+- Extractor: `heuristic-v1` · documents: 60 · mean wall time incl. render+OCR: 0.60 s/doc · LLM cost: $0.0000
 - Corpus: `compback_extract.synthetic.corpus` (fictional, 3 layouts, ~50% with injected errors). **Synthetic only — not a measure of real-world accuracy.**
 
 ## By field

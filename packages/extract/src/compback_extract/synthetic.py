@@ -213,7 +213,7 @@ def generate_case(
         expense_constant=Decimal(rng.choice([160, 200, 250])),
         previously_billed=Decimal(0),
         overtime_premium_pay=ot,
-        payroll_records_total=sum((ln.payroll for ln in lines), Decimal(0)),
+        payroll_records_total=sum((ln.payroll for ln in lines), Decimal(0)) + ot,
     )
     case.worksheet_mod = case.mod
     if case.schedule_credit_pct == 0:
@@ -225,6 +225,9 @@ def generate_case(
 
 
 def _inject(case: SyntheticCase, kind: str, rng: random.Random) -> None:
+    if kind == "missing_credit" and case.schedule_credit_pct == 0:
+        case.schedule_credit_pct = Decimal("0.10")  # the policy promised a credit...
+        case.schedule_credit_applied = True  # ...so the correct bill includes it
     before = case.total_premium
     if kind == "line_arithmetic":
         i = rng.randrange(len(case.lines))
@@ -234,8 +237,6 @@ def _inject(case: SyntheticCase, kind: str, rng: random.Random) -> None:
         case.mod = case.worksheet_mod + Decimal(rng.randrange(5, 25)) / 100
         desc = f"Bill applies mod {case.mod}, worksheet shows {case.worksheet_mod}"
     elif kind == "missing_credit":
-        if case.schedule_credit_pct == 0:
-            case.schedule_credit_pct = Decimal("0.10")
         case.schedule_credit_applied = False
         desc = f"Promised {case.schedule_credit_pct * 100:.0f}% schedule credit not applied"
     elif kind == "duplicate_class":
@@ -245,11 +246,14 @@ def _inject(case: SyntheticCase, kind: str, rng: random.Random) -> None:
     elif kind == "overtime_included":
         i = max(range(len(case.lines)), key=lambda k: case.lines[k].payroll)
         case.lines[i].payroll += case.overtime_premium_pay
-        case.payroll_records_total += case.overtime_premium_pay
         desc = "Overtime premium pay included in audited payroll"
     elif kind == "payroll_mismatch":
+        # Period without overtime, so the excess is unambiguous.
+        case.payroll_records_total -= case.overtime_premium_pay
+        case.overtime_premium_pay = Decimal(0)
         i = rng.randrange(len(case.lines))
-        case.lines[i].payroll += Decimal(rng.randrange(20, 200)) * 100
+        pct = Decimal(rng.randrange(2, 10)) / 100  # above the detector's 1% tolerance
+        case.lines[i].payroll += q(case.payroll_records_total * pct)
         desc = "Audited payroll exceeds payroll records"
     else:
         raise ValueError(f"unknown error kind: {kind}")
@@ -386,5 +390,7 @@ def corpus(n: int, seed: int = 1000) -> list[SyntheticCase]:
     for i in range(n):
         k = rng.choice([0, 0, 1, 1, 2])
         errs = tuple(rng.sample(ERROR_KINDS, k))
+        if {"overtime_included", "payroll_mismatch"} <= set(errs):
+            errs = tuple(e for e in errs if e != "payroll_mismatch")
         cases.append(generate_case(seed + i, errs, TEMPLATES[i % len(TEMPLATES)]))
     return cases

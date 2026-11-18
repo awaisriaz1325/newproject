@@ -1,5 +1,6 @@
 """ORM models. Importing this package registers every table on ``Base.metadata``."""
 
+from compback_core.models.analysis import Finding, Policy, Recomputation
 from compback_core.models.base import Base
 from compback_core.models.documents import Document, DocumentPage, Extraction, ExtractionEdit
 from compback_core.models.platform import Job, JurisdictionPolicy
@@ -29,11 +30,14 @@ __all__ = [
     "EmailToken",
     "Extraction",
     "ExtractionEdit",
+    "Finding",
     "Job",
     "JurisdictionPolicy",
     "Membership",
     "Organization",
+    "Policy",
     "RateLimitCounter",
+    "Recomputation",
     "Session",
     "User",
 ]
