@@ -32,7 +32,7 @@ jobs:
       COMPBACK_DATABASE_OWNER_URL: postgresql+psycopg://compback_owner:compback_owner@localhost:5432/compback_test
     steps:
       - uses: actions/checkout@v7
-      - uses: astral-sh/setup-uv@v10
+      - uses: astral-sh/setup-uv@v10.3.3
         with:
           enable-cache: true
       - name: Install system packages (OCR)
