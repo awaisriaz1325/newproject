@@ -33,3 +33,10 @@ All notable changes are recorded here (Keep a Changelog style).
 - Class-code review assistant (licensing-gated), prioritization baseline, quality tracking.
 - Cases workflow, dispute package PDF/DOCX, deadlines with sources, outcomes with proof, fee
   transparency, Stripe invoicing with idempotency and signed, idempotent webhooks.
+
+### Web UI — 2026-11-18
+- Landing page (no invented statistics), signup/sign-in/MFA/verification, workspace with uploads and
+  live status, side-by-side extraction verification, free-scan report with citations and line-by-line
+  recomputation, case tracker (package download, fee terms, submission record, outcomes, fees),
+  customer-visible access log, advisor invite/approve/revoke, legal placeholders.
+- Browser smoke test (`tests/e2e/smoke.cjs`) run locally end-to-end.
