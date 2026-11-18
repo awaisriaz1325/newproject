@@ -58,6 +58,7 @@ known-first-party = ["compback_core", "compback_vault", "compback_extract", "com
 "**/tests/**" = ["S", "PLR", "N802", "SIM117", "PLC0415"]
 "tests/**" = ["S", "PLR", "N802", "SIM117", "PLC0415"]
 "migrations/**" = ["E501", "N999"]
+"packages/extract/src/compback_extract/synthetic.py" = ["S311"]
 
 [tool.mypy]
 python_version = "3.13"

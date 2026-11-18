@@ -68,7 +68,7 @@ class Settings(BaseSettings):
     clamav_port: int = 3310
 
     # LLM
-    llm_provider: str = "fake"
+    llm_provider: str = "heuristic"
     llm_model: str = "claude-opus-5-5"
     anthropic_api_key: SecretStr | None = None
     llm_cost_cap_usd_per_analysis: Decimal = Decimal("5.00")
@@ -80,8 +80,8 @@ class Settings(BaseSettings):
                 raise ValueError("local storage backend is not allowed in staging/prod")
             if self.kms_backend == "local":
                 raise ValueError("local KMS backend is not allowed in staging/prod")
-            if self.llm_provider == "fake":
-                raise ValueError("fake LLM provider is not allowed in staging/prod")
+            if self.llm_provider != "anthropic":
+                raise ValueError("llm_provider must be 'anthropic' in staging/prod")
             if self.signing_secret is None:
                 raise ValueError("signing_secret is required in staging/prod")
             if not self.cookie_secure:

@@ -1,0 +1,64 @@
+{
+  "extractor": "heuristic-v1",
+  "n": 60,
+  "scanned": false,
+  "fields": {
+    "policy_number": {
+      "tp": 60,
+      "fp": 0,
+      "fn": 0
+    },
+    "total_manual_premium": {
+      "tp": 60,
+      "fp": 0,
+      "fn": 0
+    },
+    "experience_mod": {
+      "tp": 60,
+      "fp": 0,
+      "fn": 0
+    },
+    "expense_constant": {
+      "tp": 60,
+      "fp": 0,
+      "fn": 0
+    },
+    "total_premium": {
+      "tp": 60,
+      "fp": 0,
+      "fn": 0
+    },
+    "previously_billed": {
+      "tp": 60,
+      "fp": 0,
+      "fn": 0
+    },
+    "balance": {
+      "tp": 60,
+      "fp": 0,
+      "fn": 0
+    },
+    "class_lines": {
+      "tp": 182,
+      "fp": 0,
+      "fn": 0
+    }
+  },
+  "layouts": {
+    "statement": {
+      "tp": 198,
+      "fp": 0,
+      "fn": 0
+    },
+    "worksheet": {
+      "tp": 200,
+      "fp": 0,
+      "fn": 0
+    },
+    "billing": {
+      "tp": 204,
+      "fp": 0,
+      "fn": 0
+    }
+  }
+}

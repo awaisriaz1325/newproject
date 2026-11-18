@@ -115,3 +115,61 @@ class DocumentPage(IdMixin, Base):
     image_key: Mapped[str | None] = mapped_column(String(300))
     width: Mapped[int | None] = mapped_column(Integer)
     height: Mapped[int | None] = mapped_column(Integer)
+
+
+class Extraction(IdMixin, Base):
+    """Structured data extracted from one document. Feeds the engine only once verified/ready."""
+
+    __tablename__ = "extractions"
+    __table_args__ = (
+        CheckConstraint("status IN ('needs_review','ready','verified','failed')", name="status"),
+        Index("ix_extractions_doc", "document_id", "created_at"),
+        Index("ix_extractions_org", "org_id"),
+    )
+
+    org_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("organizations.id", ondelete="CASCADE"), nullable=False
+    )
+    document_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("documents.id", ondelete="CASCADE"), nullable=False
+    )
+    doc_type: Mapped[str] = mapped_column(String(40), nullable=False)
+    schema_name: Mapped[str] = mapped_column(String(60), nullable=False)
+    schema_version: Mapped[str] = mapped_column(String(30), nullable=False)
+    extractor: Mapped[str] = mapped_column(String(60), nullable=False)
+    data: Mapped[dict[str, Any]] = mapped_column(JSONB, nullable=False)
+    issues: Mapped[list[dict[str, Any]]] = mapped_column(JSONB, nullable=False, server_default="[]")
+    review_reasons: Mapped[list[str]] = mapped_column(JSONB, nullable=False, server_default="[]")
+    status: Mapped[str] = mapped_column(String(15), nullable=False)
+    min_confidence: Mapped[Decimal | None] = mapped_column(Numeric(4, 3))
+    llm_input_tokens: Mapped[int] = mapped_column(Integer, nullable=False, server_default="0")
+    llm_output_tokens: Mapped[int] = mapped_column(Integer, nullable=False, server_default="0")
+    llm_cost_usd: Mapped[Decimal] = mapped_column(
+        Numeric(10, 4), nullable=False, server_default="0"
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+    verified_by: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True))
+    verified_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class ExtractionEdit(IdMixin, Base):
+    """Human corrections. Kept as evaluation data (used only with consent; see ADR)."""
+
+    __tablename__ = "extraction_edits"
+    __table_args__ = (Index("ix_extraction_edits_ext", "extraction_id"),)
+
+    org_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("organizations.id", ondelete="CASCADE"), nullable=False
+    )
+    extraction_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("extractions.id", ondelete="CASCADE"), nullable=False
+    )
+    field_path: Mapped[str] = mapped_column(String(120), nullable=False)
+    old_value: Mapped[str | None] = mapped_column(Text)
+    new_value: Mapped[str | None] = mapped_column(Text)
+    edited_by: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )

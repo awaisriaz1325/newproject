@@ -10,7 +10,7 @@ import structlog
 from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 
-from compback_api.routes import auth, documents, health, jurisdictions, orgs
+from compback_api.routes import auth, documents, extractions, health, jurisdictions, orgs
 from compback_core.config import Settings, get_settings
 from compback_core.logs import configure_logging, get_logger
 
@@ -78,6 +78,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(orgs.router)
     app.include_router(jurisdictions.router)
     app.include_router(documents.router)
+    app.include_router(extractions.router)
     return app
 
 

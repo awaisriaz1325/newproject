@@ -1,4 +1,4 @@
-"""Extraction-stage handlers. Phase 4 replaces the placeholder classifier."""
+"""Extraction-stage job handlers."""
 
 from __future__ import annotations
 
@@ -6,7 +6,12 @@ import uuid
 
 from sqlalchemy.orm import Session
 
+from compback_extract import pipeline
+
 
 def classify_document(db: Session, document_id: uuid.UUID) -> None:
-    """Placeholder until Phase 4: leaves ``doc_type = 'unknown'``."""
-    del db, document_id
+    pipeline.classify(db, document_id)
+
+
+def extract_document(db: Session, document_id: uuid.UUID) -> None:
+    pipeline.extract(db, document_id)

@@ -16,7 +16,9 @@ from sqlalchemy.orm import Session
 from compback_core import queue
 from compback_core.db import tenant_session
 from compback_core.logs import get_logger
+from compback_extract.pipeline import EXTRACT_JOB
 from compback_vault.service import CLASSIFY_JOB, INGEST_JOB, Vault
+from compback_worker.extraction import classify_document, extract_document
 
 log = get_logger(__name__)
 
@@ -43,9 +45,12 @@ def _ingest(db: Session, job: queue.ClaimedJob) -> None:
 
 @handler(CLASSIFY_JOB)
 def _classify(db: Session, job: queue.ClaimedJob) -> None:
-    from compback_worker.extraction import classify_document  # noqa: PLC0415 - optional stage
-
     classify_document(db, uuid.UUID(job.payload["document_id"]))
+
+
+@handler(EXTRACT_JOB)
+def _extract(db: Session, job: queue.ClaimedJob) -> None:
+    extract_document(db, uuid.UUID(job.payload["document_id"]))
 
 
 def run_once(kinds: list[str] | None = None) -> int:

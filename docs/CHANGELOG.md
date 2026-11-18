@@ -20,3 +20,7 @@ All notable changes are recorded here (Keep a Changelog style).
 - Secure document vault: upload safety, ClamAV scanning, local OCR + SSN/TIN redaction in text and
   pixels, sandboxed processing, envelope-encrypted storage, watermarked views/downloads with user-bound
   links, retention and hard deletion, Postgres job queue and worker.
+
+### Phase 4 — 2026-11-18
+- Extraction schemas, classifier, baseline + Claude extractors, cross-checks, review routing,
+  verification API, synthetic corpus generator and evaluation harness with measured results.
