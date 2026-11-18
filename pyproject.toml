@@ -70,7 +70,7 @@ warn_unreachable = true
 exclude = ["migrations/", "apps/web/", "build/"]
 
 [[tool.mypy.overrides]]
-module = ["pyotp.*", "pypdfium2.*", "boto3.*", "botocore.*", "openpyxl.*", "reportlab.*"]
+module = ["pyotp.*", "pypdfium2.*", "boto3.*", "botocore.*", "openpyxl.*", "reportlab.*", "sklearn.*", "docx.*", "stripe.*"]
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]

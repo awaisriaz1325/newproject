@@ -48,6 +48,7 @@ class Organization(IdMixin, TimestampMixin, Base):
     name: Mapped[str] = mapped_column(String(200), nullable=False)
     # Short public code an employer gives to an advisor firm to request a link.
     invite_code: Mapped[str] = mapped_column(String(16), nullable=False, unique=True)
+    billing_customer_id: Mapped[str | None] = mapped_column(String(100))
 
 
 class User(IdMixin, TimestampMixin, Base):

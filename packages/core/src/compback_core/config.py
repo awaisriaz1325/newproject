@@ -73,6 +73,17 @@ class Settings(BaseSettings):
     anthropic_api_key: SecretStr | None = None
     llm_cost_cap_usd_per_analysis: Decimal = Decimal("5.00")
 
+    # Fees (founder decision FD-05; PROVISIONAL placeholders shown to customers before approval)
+    analysis_fee_usd: Decimal = Decimal("499.00")
+    contingency_rate: Decimal = Decimal("0.25")
+    contingency_cap_usd: Decimal = Decimal("25000.00")
+    credit_analysis_fee_against_contingency: bool = True
+
+    # Stripe (billing). Keys only via secret store; never committed.
+    billing_provider: str = "fake"
+    stripe_api_key: SecretStr | None = None
+    stripe_webhook_secret: SecretStr | None = None
+
     @model_validator(mode="after")
     def _prod_safety(self) -> Settings:
         if self.env in (Environment.PROD, Environment.STAGING):
@@ -82,6 +93,8 @@ class Settings(BaseSettings):
                 raise ValueError("local KMS backend is not allowed in staging/prod")
             if self.llm_provider != "anthropic":
                 raise ValueError("llm_provider must be 'anthropic' in staging/prod")
+            if self.billing_provider != "stripe" or self.stripe_webhook_secret is None:
+                raise ValueError("stripe billing and webhook secret are required in staging/prod")
             if self.signing_secret is None:
                 raise ValueError("signing_secret is required in staging/prod")
             if not self.cookie_secure:

@@ -13,6 +13,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from compback_api.routes import (
     analysis,
     auth,
+    cases,
     documents,
     extractions,
     health,
@@ -88,6 +89,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(documents.router)
     app.include_router(extractions.router)
     app.include_router(analysis.router)
+    app.include_router(cases.router)
+    app.include_router(cases.webhook_router)
     return app
 
 

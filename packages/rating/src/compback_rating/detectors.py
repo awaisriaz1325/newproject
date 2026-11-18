@@ -50,7 +50,15 @@ def implied_schedule_pct(ctx: AnalysisContext) -> Decimal | None:
     if ctx.declarations and ctx.declarations.schedule_credit_pct:
         return ctx.declarations.schedule_credit_pct
     billed = recompute(ctx.audit, Overrides(use_printed_line_premiums=True))
-    return -ctx.audit.schedule_amount / billed.modified if billed.modified else None
+    if not billed.modified:
+        return None
+    implied = -ctx.audit.schedule_amount / billed.modified
+    # Schedule rating is filed in whole/half percents; snap when that reproduces the printed amount
+    # exactly, which removes 1-cent drift from re-deriving the rate from rounded amounts.
+    snapped = (implied * 200).to_integral_value() / 200
+    if r2(billed.modified * snapped) == -ctx.audit.schedule_amount:
+        return snapped
+    return implied
 
 
 def _impact(ctx: AnalysisContext, corrected: Overrides) -> Decimal:

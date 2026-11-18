@@ -28,3 +28,8 @@ All notable changes are recorded here (Keep a Changelog style).
 ### Phase 5 — 2026-11-18
 - Rules registry with NCRB citations, Decimal engine with explanations, 7 detectors with engine-priced
   impacts, golden/property tests, policies/recomputations/findings persistence, analysis + reviewer API.
+
+### Phases 6–8 — 2026-11-18
+- Class-code review assistant (licensing-gated), prioritization baseline, quality tracking.
+- Cases workflow, dispute package PDF/DOCX, deadlines with sources, outcomes with proof, fee
+  transparency, Stripe invoicing with idempotency and signed, idempotent webhooks.
