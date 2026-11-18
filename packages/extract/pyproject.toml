@@ -6,6 +6,7 @@ dependencies = [
   "compback-core",
   "compback-vault",
   "anthropic>=0.50",
+  "reportlab>=4.2",
 ]
 
 [build-system]

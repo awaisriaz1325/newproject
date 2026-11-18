@@ -8,6 +8,8 @@ dependencies = [
   "boto3>=1.37",
   "pypdfium2>=4.30",
   "pillow>=11",
+  "openpyxl>=3.1",
+  "defusedxml>=0.7",
 ]
 
 [build-system]

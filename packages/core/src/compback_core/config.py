@@ -60,6 +60,9 @@ class Settings(BaseSettings):
 
     # Uploads
     max_upload_bytes: int = 50 * 1024 * 1024
+    document_retention_days: int = 3 * 365
+    # HMAC key for short-lived, user-bound download links. Required in staging/prod.
+    signing_secret: SecretStr | None = None
     max_pdf_pages: int = 300
     clamav_host: str | None = None
     clamav_port: int = 3310
@@ -79,6 +82,8 @@ class Settings(BaseSettings):
                 raise ValueError("local KMS backend is not allowed in staging/prod")
             if self.llm_provider == "fake":
                 raise ValueError("fake LLM provider is not allowed in staging/prod")
+            if self.signing_secret is None:
+                raise ValueError("signing_secret is required in staging/prod")
             if not self.cookie_secure:
                 raise ValueError("cookie_secure must be true in staging/prod")
         return self

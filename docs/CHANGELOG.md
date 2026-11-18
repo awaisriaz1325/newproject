@@ -15,3 +15,8 @@ All notable changes are recorded here (Keep a Changelog style).
 ### Phase 2 — 2026-11-18
 - Tenancy, auth (argon2id, sessions, CSRF, TOTP MFA, lockout, rate limits), advisor consent links,
   reviewer JIT grants, RLS on all tenant tables, hash-chained append-only audit log, jurisdiction seed.
+
+### Phase 3 — 2026-11-18
+- Secure document vault: upload safety, ClamAV scanning, local OCR + SSN/TIN redaction in text and
+  pixels, sandboxed processing, envelope-encrypted storage, watermarked views/downloads with user-bound
+  links, retention and hard deletion, Postgres job queue and worker.

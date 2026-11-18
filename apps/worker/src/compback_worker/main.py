@@ -12,6 +12,7 @@ from compback_core.logs import configure_logging, get_logger
 
 log = get_logger(__name__)
 _running = True
+RETENTION_SWEEP_INTERVAL_S = 3600
 
 
 def _stop(signum: int, _frame: FrameType | None) -> None:
@@ -26,9 +27,16 @@ def run(poll_interval: float = 1.0, once: bool = False) -> int:
     signal.signal(signal.SIGTERM, _stop)
     signal.signal(signal.SIGINT, _stop)
     log.info("worker_started")
-    from compback_worker.runner import run_once  # noqa: PLC0415 - avoid import cost at module load
+    from compback_worker.runner import (  # noqa: PLC0415 - avoid import cost at module load
+        run_once,
+        run_retention_sweep,
+    )
 
+    last_sweep = 0.0
     while _running:
+        if time.monotonic() - last_sweep > RETENTION_SWEEP_INTERVAL_S:
+            log.info("retention_sweep", deleted=run_retention_sweep())
+            last_sweep = time.monotonic()
         processed = run_once()
         if once:
             return processed

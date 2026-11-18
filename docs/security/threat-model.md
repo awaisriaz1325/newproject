@@ -1,6 +1,6 @@
-# Threat model (STRIDE) — v0.2 (Phase 2)
+# Threat model (STRIDE) — v0.3 (Phase 3)
 
-> Phase 2 status: T1, T2, T3, T4 (grants), T5, T16 mitigations implemented and tested.
+> Phase 3 status: T1–T7, T9, T12, T16 mitigations implemented and tested. Signed URLs replaced by API-streamed, watermarked content with user-bound HMAC links (stronger than bucket URLs).
 
 Updated every phase. Severity: Low / Medium / High / Critical.
 
