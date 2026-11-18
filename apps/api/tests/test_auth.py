@@ -177,3 +177,22 @@ def test_rate_limit_login(monkeypatch: pytest.MonkeyPatch, app_client: TestClien
         for _ in range(25)
     ]
     assert 429 in statuses
+
+
+def test_mfa_verify_limited_per_account(
+    monkeypatch: pytest.MonkeyPatch, signup: Any, enroll: Any
+) -> None:
+    actor = signup()
+    enroll(actor)
+    login = TestClient(actor.client.app)
+    csrf = login.post(
+        "/auth/login", headers=H, json={"email": actor.email, "password": PASSWORD}
+    ).json()["csrf_token"]
+    monkeypatch.setattr(get_settings(), "rate_limits_enabled", True)
+    statuses = []
+    for i in range(12):  # a fresh IP per guess: only the per-account cap can stop this
+        c = TestClient(actor.client.app, client=(f"203.0.113.{i}", 50000), cookies=login.cookies)
+        r = c.post("/auth/mfa/verify", json={"code": "000000"}, headers={"X-CSRF-Token": csrf})
+        statuses.append(r.status_code)
+    assert statuses[:10] == [400] * 10
+    assert statuses[10:] == [429, 429]

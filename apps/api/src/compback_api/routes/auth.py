@@ -14,6 +14,7 @@ from compback_api.deps import (
     CSRF_COOKIE,
     AuthDb,
     CurrentPrincipal,
+    check_rate,
     rate_limit,
     require_csrf_header,
     session_cookie_name,
@@ -127,12 +128,14 @@ def signup(body: SignupIn, db: AuthDb) -> StatusOut:
     except security.WeakPasswordError as exc:
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, str(exc)) from exc
 
+    # Hash before the lookup so both branches cost the same (no timing-based enumeration).
+    password_hash = security.hash_password(body.password)
     existing = db.scalar(select(User).where(User.email == body.email))
     if existing is not None:
         db.add(EmailOutbox(to_user_id=existing.id, template="signup_existing", payload={}))
         return StatusOut(status="check_email")
 
-    user = User(email=body.email, password_hash=security.hash_password(body.password))
+    user = User(email=body.email, password_hash=password_hash)
     org = Organization(
         kind=body.org_kind, name=body.org_name, invite_code=security.new_invite_code()
     )
@@ -309,6 +312,8 @@ def mfa_enable(body: CodeIn, principal: CurrentPrincipal) -> RecoveryCodesOut:
 
 @router.post("/mfa/verify", dependencies=[Depends(rate_limit("mfa", 10, 300))])
 def mfa_verify(body: CodeIn, principal: CurrentPrincipal) -> StatusOut:
+    # Per-account cap: the per-IP limit alone lets a distributed attacker brute-force TOTP.
+    check_rate("mfa_user", str(principal.user_id), 10, 300)
     with tenant_session(None, principal.user_id) as db:
         user = db.get(User, principal.user_id)
         assert user is not None

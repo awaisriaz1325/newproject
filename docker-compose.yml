@@ -4,7 +4,7 @@ services:
     image: postgres:16
     environment:
       POSTGRES_PASSWORD: postgres
-    ports: ["5432:5432"]
+    ports: ["127.0.0.1:5432:5432"]
     volumes:
       - pgdata:/var/lib/postgresql/data
       - ./infra/db/bootstrap.sql:/docker-entrypoint-initdb.d/00-bootstrap.sql:ro
@@ -16,7 +16,7 @@ services:
 
   clamav:
     image: clamav/clamav:stable
-    ports: ["3310:3310"]
+    ports: ["127.0.0.1:3310:3310"]
 
   api:
     build: { context: ., dockerfile: infra/docker/python.Dockerfile, target: runtime }
@@ -25,7 +25,10 @@ services:
       COMPBACK_DATABASE_URL: postgresql+psycopg://compback_app:compback_app@db:5432/compback
       COMPBACK_DATABASE_OWNER_URL: postgresql+psycopg://compback_owner:compback_owner@db:5432/compback
       COMPBACK_CLAMAV_HOST: clamav
-    ports: ["8000:8000"]
+      # Trust X-Forwarded-For from the web proxy so rate limits key on the real client IP.
+      # Safe only because the API port is bound to localhost; in prod set this to the LB range.
+      FORWARDED_ALLOW_IPS: "*"
+    ports: ["127.0.0.1:8000:8000"]
     depends_on: { db: { condition: service_healthy } }
 
   worker:

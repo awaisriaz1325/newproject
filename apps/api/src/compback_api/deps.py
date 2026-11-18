@@ -120,33 +120,36 @@ def require_csrf_header(
         raise HTTPException(status.HTTP_403_FORBIDDEN, "missing X-CSRF-Token header")
 
 
-def rate_limit(name: str, limit: int, window_seconds: int) -> Callable[[Request], None]:
+def check_rate(name: str, subject: str, limit: int, window_seconds: int) -> None:
     """Fixed-window limiter shared across instances (Postgres-backed, no PII stored)."""
+    if not get_settings().rate_limits_enabled:
+        return
+    key = hashlib.sha256(f"{name}:{subject}".encode()).hexdigest()
+    now = utcnow()
+    window = datetime.fromtimestamp(int(now.timestamp()) // window_seconds * window_seconds, tz=UTC)
+    with tenant_session(None, None, actor_kind="system") as db:
+        count = db.execute(
+            text(
+                "INSERT INTO rate_limit_counters (key, window_start, count) "
+                "VALUES (:k, :w, 1) ON CONFLICT (key, window_start) "
+                "DO UPDATE SET count = rate_limit_counters.count + 1 RETURNING count"
+            ),
+            {"k": key, "w": window},
+        ).scalar_one()
+    if count > limit:
+        raise HTTPException(
+            status.HTTP_429_TOO_MANY_REQUESTS,
+            "too many requests, try again later",
+            headers={"Retry-After": str(window_seconds)},
+        )
+
+
+def rate_limit(name: str, limit: int, window_seconds: int) -> Callable[[Request], None]:
+    """Per-client-IP limit; behind a proxy, set FORWARDED_ALLOW_IPS or all clients share a key."""
 
     def dependency(request: Request) -> None:
-        if not get_settings().rate_limits_enabled:
-            return
         client = request.client.host if request.client else "unknown"
-        key = hashlib.sha256(f"{name}:{client}".encode()).hexdigest()
-        now = utcnow()
-        window = datetime.fromtimestamp(
-            int(now.timestamp()) // window_seconds * window_seconds, tz=UTC
-        )
-        with tenant_session(None, None, actor_kind="system") as db:
-            count = db.execute(
-                text(
-                    "INSERT INTO rate_limit_counters (key, window_start, count) "
-                    "VALUES (:k, :w, 1) ON CONFLICT (key, window_start) "
-                    "DO UPDATE SET count = rate_limit_counters.count + 1 RETURNING count"
-                ),
-                {"k": key, "w": window},
-            ).scalar_one()
-        if count > limit:
-            raise HTTPException(
-                status.HTTP_429_TOO_MANY_REQUESTS,
-                "too many requests, try again later",
-                headers={"Retry-After": str(window_seconds)},
-            )
+        check_rate(name, client, limit, window_seconds)
 
     return dependency
 
